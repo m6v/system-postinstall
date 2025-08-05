@@ -1,0 +1,17 @@
+[Unit]
+Description=Another File Integrity Checker
+# After=network.target
+# Запуск после монтирования локальных файловых систем
+After=local-fs.target
+
+[Service]
+# При типе oneshot все последующие юниты будут ждать заверешения afick прежде чем запустятся,
+# при типе simple последующие юниты запускаются параллельно, не ожидая завершения afick
+Type=oneshot
+ExecStart=/bin/bash -c "afick -k &>> /dev/null; exit 0"
+# Считать сервис активным, несмотря на то, что процесс завершился
+RemainAfterExit=true
+# StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target
