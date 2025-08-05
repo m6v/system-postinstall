@@ -1,0 +1,51 @@
+---
+- name: Копировать установочный файл Dr.Web Workstation 11 для Linux
+  copy:
+    src: drweb-workstations_11.1.3-2201141226+mo~linux_amd64.run
+    dest: /tmp
+    mode: '0755'
+
+- name: Установить Dr.Web Workstation 11 для Linux
+  shell: |
+    /tmp/drweb-workstations_11.1.3-2201141226+mo~linux_amd64.run -- --non-interactive
+    drweb-configure session enable
+
+- name: Создать символическую ссылку на модуль аутентификации pam_drweb_session.so 
+  file:
+    src: /opt/drweb.com/lib/x86_64-linux-gnu/pam/pam_drweb_session.so 
+    dest: /lib/security/pam_drweb_session.so 
+    state: link
+
+- name: Создать каталог карантина
+  file:
+    path: '{{ quarantine }}'
+    state: directory
+    mode: '700'
+
+- name: Установить мандатные права каталога карантина
+  shell:
+    pdpl-file 3:0:0:ccnr '{{ quarantine }}'
+
+- name: Разрешить службе управления конфигурацией drweb-configd использовать механизм privsock
+# Добавить строки, только если они отсутствуют
+  lineinfile:
+    state: present
+    dest: /etc/parsec/privsock.conf
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+  loop:
+    - line: /opt/drweb.com/bin/drweb-configd
+      regexp: ^/opt/drweb.com/bin/drweb-configd$
+    - line: /opt/drweb.com/bin/drweb-configd.real
+      regexp: ^/opt/drweb.com/bin/drweb-configd.real$
+
+- name: Перезапустить службу правления конфигурацией drweb-configd
+  service:
+    name: drweb-configd
+    state: restarted
+
+# Только после активации лицензии на сервере Dr.Web
+- name: Подключить хост к антивирусной сети
+  shell: |
+    wget https://192.168.56.128:9081/install/windows/drwcsd-certificate.pem --no-check-certificate -P /tmp
+    drweb-ctl esconnect 192.168.56.128 --Certificate /tmp/drwcsd-certificate.pem --Newbie

@@ -1,0 +1,16 @@
+---
+- name: Включение политик безопасности
+  shell:
+    "{{ policy }} enable" 
+  loop:
+    - astra-swapwiper-control
+    - astra-interpreters-lock
+    - astra-sysrq-lock
+    - astra-ptrace-lock
+    - astra-commands-lock
+    - astra-macros-lock
+    - astra-sudo-control
+    - astra-nobootmenu-control
+  loop_control:
+    loop_var: policy
+

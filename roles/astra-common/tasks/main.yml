@@ -1,0 +1,36 @@
+---
+- name: Получить имя учетной записи администратора безопасности
+  shell:
+    id -n -u 1000
+  register: admin_name
+  # имя учетной записи в {{ admin_name.stdout }}
+
+- name: Получить имя хоста
+  shell:
+    hostname
+  register: host_name
+  # имя учетной записи в {{ host_name.stdout }}
+
+# По дефолту не устанавливается локаль en_US.UTF-8, поэтому доустанавливаем
+- name: Добавить локаль en_US.UTF-8
+  lineinfile:
+    path: /etc/locale.gen
+    regexp: en_US.UTF-8
+    line: en_US.UTF-8 UTF-8
+
+- name: Сгенерировать локали
+  shell:
+    locale-gen
+
+- name: Изменить имя хоста в /etc/hosts
+  replace:
+    path: /etc/hosts
+    regexp: '127.0.1.1(\s)+(\S)+'
+    replace: '127.0.1.1\1{{ host_name.stdout }}'
+
+- name: Выполнить дополнительные задачи по конфигурированию Astra Linux
+  include_tasks: "{{ item }}"
+  loop:
+    - afick.yml
+    - secure.yml
+

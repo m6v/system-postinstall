@@ -1,0 +1,14 @@
+---
+- hosts: arm_abi
+  gather_facts: true
+  become: true
+  roles:
+    # - drweb-ess
+    
+- hosts: all
+  gather_facts: true
+  become: true
+  roles:
+    - astra-common
+    # - drweb-workstations
+

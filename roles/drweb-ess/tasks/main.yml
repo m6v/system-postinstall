@@ -1,0 +1,25 @@
+---
+- name: Копировать установочный и лицензионный файлы Dr.Web Esuite Server 13 для Linux
+  copy:
+    src: "{{ item }}"
+    dest: /tmp
+    mode: '0755'
+  loop:
+    - drweb-13.00.0-202204040-esuite-server-unix-linux-x86_64.tar.gz.run
+    - agent.key
+
+- name: Установить Dr.Web Esuite Server 13 для Linux
+  shell: |
+    /tmp/drweb-13.00.0-202204040-esuite-server-unix-linux-x86_64.tar.gz.run --target /tmp -- --quiet
+  # Лог, содержащий в том числе пароль, сохраняется в домашнем каталоге администратора YYMMDDhhmmss.msecs.install.log
+  register: drweb_output
+
+- name: Запустить службу drwcsd
+  service:
+    name: drwcsd
+    state: started
+
+- name: Показать результаты установки Dr.Web Esuite Server 13 для Linux
+  debug:
+    msg: "{{ drweb_output.stdout_lines }}"
+
