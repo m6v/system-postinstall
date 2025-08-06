@@ -1,0 +1,57 @@
+---
+- name: Установка необходимых зависимостей
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - python-dbus
+    - fly-notifications
+
+- name: Копирование файлов конфигурации syslog-ng
+  copy:
+    src: "{{ item }}"
+    dest: /etc/syslog-ng/conf.d
+    owner: root
+    group: root
+  loop:
+    - afick-events.conf
+    - astra-events.conf
+    - audit-events.conf
+    - rebus-events.conf
+    - astra-custom.conf
+
+- name: Изменение настроек auditd
+  # Удалить (переименовать) файл 10-parsec.rules, задающий для всех событий auditd
+  # ключ parsec-p, после чего их невозможно фильтровать по собственным ключам
+  shell: |
+    if [ -f /etc/audit/rules.d/10-parsec.rules ]; then
+      mv /etc/audit/rules.d/10-parsec.rules /etc/audit/rules.d/10-parsec.rules.bak;
+    fi
+
+- name: Копирование конфигурационного файла auditd
+  copy:
+    src: astra-custom.rules
+    dest: /etc/audit/rules.d/
+
+- name: Настройка пути к классам обработчиков событий syslog-ng
+  lineinfile:
+    path: /etc/default/syslog-ng
+    line: PYTHONPATH="/usr/local/lib/python2.7/dist-packages"
+    insertafter: EOF
+
+- name: Настройка формата представления даты и времени в логах syslog-ng
+  # Добавить в группу параметров options параметр ts-format(iso);
+  replace:
+    path: /etc/syslog-ng/syslog-ng.conf
+    # Вставить после первой группы параметр ts-format(iso)
+    regexp: '(^options[\s\S]*?)( ts-format\(iso\);\n};|\n};)'
+    replace: '\1 ts-format(iso);\n};'
+
+- name: Копирование конфигурационного файла с разрешением приема широковещательных сообщений по dbus
+  copy:
+    src: fly-notificationsrc
+    dest: /home/{{ admin_name.stdout }}/.config
+
+# В Астре 1.8 возможно необходимо включить аудит для файлов и процессов
+# astra-audit-control enable
+
