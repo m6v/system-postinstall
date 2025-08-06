@@ -1,5 +1,5 @@
 ---
-- name: Установка необходимых зависимостей
+- name: Установка зависимостей для отправки и отображения сообщений
   apt:
     name: "{{ item }}"
     state: present
@@ -33,6 +33,11 @@
     src: astra-custom.rules
     dest: /etc/audit/rules.d/
 
+- name: Копирование файла с классами кастомных обработчиков событий syslog-ng
+  copy:
+    src: custom_syslog_ng_classes.py
+    dest: /usr/local/lib/python2.7/dist-packages
+
 - name: Настройка пути к классам обработчиков событий syslog-ng
   lineinfile:
     path: /etc/default/syslog-ng
@@ -52,6 +57,8 @@
     src: fly-notificationsrc
     dest: /home/{{ admin_name.stdout }}/.config
 
-# В Астре 1.8 возможно необходимо включить аудит для файлов и процессов
-# astra-audit-control enable
+# В Астре 1.8 возможно следует (нужно проверять) включить дополнительные правили аудита
+# - name: Включить правила PARSEC-аудита процессов и файлов и правила сетевого PARSEC-аудита
+#   shell:
+#     astra-audit-control enable; astra-audit-network-control enable
 
