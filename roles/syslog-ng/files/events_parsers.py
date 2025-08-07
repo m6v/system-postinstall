@@ -2,9 +2,6 @@
 
 from datetime import datetime
 from dateutil import parser, tz
-import dbus
-import dbus.service
-from dbus.mainloop.glib import DBusGMainLoop
 import json
 import logging
 import os

@@ -1,8 +1,12 @@
+В файле astra-custom.conf в эндпоинте d_udp_syslog изменить адрес на АРМ АБИ
+
 Разделить задачу syslog-ng на две:
 all - только отправка логов на АРМ-АБИ
 arm_abi - отображение уведомлений
 
-Из astra-custom.conf вычленить destination d_udp_syslog и записать его в другой или отдельный конфиг
+Разобраться почему dbus_sender пишет лог в events_parsers.log
+
+Разделить events_parsers.py на несколько
 
 rebus_events вынести в отдельную задачу с установкой ПК Ребус-СОВ
 

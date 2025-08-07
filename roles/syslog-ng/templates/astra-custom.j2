@@ -11,7 +11,7 @@ source s_udp_syslog {
 # сюда отправляются разобранные логи для вывода их в уведомлении
 destination d_udp_syslog {
     udp(
-        "192.168.56.128"
+        "{{ hostvars[ 'arm-abi' ].ansible_default_ipv4.address }}"
         port(514)
         template("$notification\n")
     );
