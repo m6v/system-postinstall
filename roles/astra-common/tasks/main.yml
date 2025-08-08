@@ -41,7 +41,7 @@
   when: hostvars[item].ansible_host is defined
   with_items: "{{ groups.all }}"
 
-- name: Выполнение дополнительных задач по конфигурированию
+- name: Запуск дополнительных задач по конфигурированию
   include_tasks: "{{ item }}"
   loop:
     - afick.yml
