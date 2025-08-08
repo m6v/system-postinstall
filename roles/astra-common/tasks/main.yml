@@ -1,34 +1,38 @@
 ---
-- name: Получить имя учетной записи администратора безопасности
+- name: Получение имени учетной записи администратора безопасности
   shell:
     id -n -u 1000
   register: admin_name
   # имя учетной записи в {{ admin_name.stdout }}
 
-- name: Получить имя хоста
+- name: Получение имени хоста
   shell:
     hostname
   register: host_name
   # имя учетной записи в {{ host_name.stdout }}
 
+- name: Получение ip-адреса АРМ-АБИ из инвентори
+  set_fact:
+    arm_abi_addr: "{{ hostvars['arm-abi']['ansible_host'] }}"
+
 # По дефолту не устанавливается локаль en_US.UTF-8, поэтому доустанавливаем
-- name: Добавить локаль en_US.UTF-8
+- name: Добавление локали en_US.UTF-8
   lineinfile:
     path: /etc/locale.gen
     regexp: en_US.UTF-8
     line: en_US.UTF-8 UTF-8
 
-- name: Сгенерировать локали
+- name: Генерация локалей
   shell:
     locale-gen
 
-- name: Изменить имя хоста в /etc/hosts
+- name: Изменение имени хоста в /etc/hosts
   replace:
     path: /etc/hosts
     regexp: '127.0.1.1(\s)+(\S)+'
     replace: '127.0.1.1\1{{ ansible_facts["nodename"] }}'
-    
-- name: Добавить IP-адреса хостов в /etc/hosts
+
+- name: Добавление IP-адресов хостов в /etc/hosts
   lineinfile:
     dest: /etc/hosts
     regexp: '.*{{ item }}$'
@@ -37,7 +41,7 @@
   when: hostvars[item].ansible_host is defined
   with_items: "{{ groups.all }}"
 
-- name: Выполнить дополнительные задачи по конфигурированию Astra Linux
+- name: Выполнение дополнительных задач по конфигурированию
   include_tasks: "{{ item }}"
   loop:
     - afick.yml

@@ -18,17 +18,14 @@
     - astra-events.conf
     - audit-events.conf
     - rebus-events.conf
-    - astra-custom.conf
 
 - name: Настройка и копирование файла с источниками и точками назначения
-  # TODO Разобраться почему "{{ hostvars[ 'arm-abi' ].ansible_default_ipv4.address }}" присваивается второй ip-адрес АРМ-АБИ, а не тот, что указан в инвентори
-  # Если отключить второй интерфейс, то получаем ошибку. Пока копируем файл во временный каталог
   template:
     src: astra-custom.j2
-    dest: /tmp/astra-custom.conf
+    dest: /etc/syslog-ng/conf.d/astra-custom.conf
 
 - name: Изменение настроек auditd
-  # Удалить (переименовать) файл 10-parsec.rules, задающий для всех событий auditd
+  # Удаление (переименование) файла 10-parsec.rules, задающего для всех событий auditd
   # ключ parsec-p, после чего их невозможно фильтровать по собственным ключам
   shell: |
     if [ -f /etc/audit/rules.d/10-parsec.rules ]; then
@@ -66,6 +63,11 @@
   copy:
     src: fly-notificationsrc
     dest: /home/{{ admin_name.stdout }}/.config
+
+- name: Перезапуск службы syslog-ng
+  service:
+    name: syslog-ng
+    state: restarted
 
 # В Астре 1.8 возможно следует (нужно проверять) включить дополнительные правили аудита
 # - name: Включить правила PARSEC-аудита процессов и файлов и правила сетевого PARSEC-аудита

@@ -1,4 +1,8 @@
 В файле astra-custom.conf в эндпоинте d_udp_syslog изменить адрес на АРМ АБИ
+его можно получить из "{{ hostvars[ 'arm-abi' ].ansible_default_ipv4.address }}" # получается по результатам сбора фактов
+                      "{{ hostvars[ 'arm-abi' ].ansible_eth0.ipv4.address }}" # нулевой интерфейс
+                      "{{ hostvars[ 'arm-abi' ].ansible_eth1.ipv4.address }}" # первый интерфейс и т.д.
+но все это по результатам сбора фактов, а не тот абрес, что в инвентори!
 
 Разделить задачу syslog-ng на две:
 all - только отправка логов на АРМ-АБИ
