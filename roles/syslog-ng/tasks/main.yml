@@ -1,9 +1,7 @@
 ---
 - name: Установка зависимостей для отправки и отображения сообщений
   apt:
-    name: "{{ item }}"
-    state: present
-  loop:
+    pkg:
     - python-dbus
     - fly-notifications
 
@@ -13,11 +11,8 @@
     dest: /etc/syslog-ng/conf.d
     owner: root
     group: root
-  loop:
-    - afick-events.conf
-    - astra-events.conf
-    - audit-events.conf
-    - rebus-events.conf
+  with_fileglob:
+    - "*.conf"
 
 - name: Настройка и копирование файла с источниками и точками назначения
   template:
@@ -37,7 +32,7 @@
     src: astra-custom.rules
     dest: /etc/audit/rules.d/
 
-- name: Копирование файла с классами обработчиков событий и файла с классом отправки сообщений в dbus
+- name: Копирование файлов с классами обработчиков событий и отправки сообщений в dbus
   copy:
     src: "{{ item }}"
     dest: /usr/local/lib/python2.7/dist-packages
@@ -73,4 +68,3 @@
 # - name: Включить правила PARSEC-аудита процессов и файлов и правила сетевого PARSEC-аудита
 #   shell:
 #     astra-audit-control enable; astra-audit-network-control enable
-
