@@ -5,12 +5,6 @@
   register: admin_name
   # имя учетной записи в {{ admin_name.stdout }}
 
-- name: Получение имени хоста
-  shell:
-    hostname
-  register: host_name
-  # имя учетной записи в {{ host_name.stdout }}
-
 - name: Получение ip-адреса АРМ-АБИ из инвентори
   set_fact:
     arm_abi_addr: "{{ hostvars['arm-abi']['ansible_host'] }}"
@@ -46,5 +40,6 @@
   include_tasks: "{{ item }}"
   loop:
     - afick.yml
+    - auditd.yml
     - secure.yml
 

@@ -1,0 +1,13 @@
+---
+- name: Изменение настроек службы auditd
+  # Удаление (переименование) файла 10-parsec.rules, задающего для всех событий auditd
+  # ключ parsec-p, после чего их невозможно фильтровать по собственным ключам
+  shell: |
+    if [ -f /etc/audit/rules.d/10-parsec.rules ]; then
+      mv /etc/audit/rules.d/10-parsec.rules /etc/audit/rules.d/10-parsec.rules.bak;
+    fi
+
+- name: Копирование конфигурационного файла auditd
+  copy:
+    src: astra-custom.rules
+    dest: /etc/audit/rules.d/

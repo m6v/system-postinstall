@@ -19,19 +19,6 @@
     src: astra-custom.j2
     dest: /etc/syslog-ng/conf.d/astra-custom.conf
 
-- name: Изменение настроек службы auditd
-  # Удаление (переименование) файла 10-parsec.rules, задающего для всех событий auditd
-  # ключ parsec-p, после чего их невозможно фильтровать по собственным ключам
-  shell: |
-    if [ -f /etc/audit/rules.d/10-parsec.rules ]; then
-      mv /etc/audit/rules.d/10-parsec.rules /etc/audit/rules.d/10-parsec.rules.bak;
-    fi
-
-- name: Копирование конфигурационного файла auditd
-  copy:
-    src: astra-custom.rules
-    dest: /etc/audit/rules.d/
-
 - name: Копирование файлов с классами обработчиков событий и отправки сообщений в dbus
   copy:
     src: "{{ item }}"
