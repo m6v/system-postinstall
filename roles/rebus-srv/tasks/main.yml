@@ -1,0 +1,37 @@
+---
+- name: Установка зависимостей для ПК "Ребус-СОВ"
+  apt:
+    pkg:
+    - libqt4-svg
+    - libqtwebkit4
+    - libcrypto++6
+
+- name: Копирование установочных файлов ПК "Ребус-СОВ" во временный каталог
+  copy:
+    src: "{{ item }}"
+    dest: /tmp
+  loop:
+  - AstraLinux
+  - Base
+
+- name: Изменение прав доступа установочного файла ПК "Ребус-СОВ"
+  file:
+    dest=/tmp/AstraLinux/install
+    mode=a+x
+
+- name: Проверка статуса серверной службы ПК "Ребус-СОВ" (ipsServerd)
+  systemd:
+    name: ipsServerd
+  register:
+    ipsServerd
+
+- name: Установка серверной части ПК "Ребус-СОВ"
+  # Выполняем только, если серверная служба неактивна
+  # Если предварительно был установлен агент, то удалить его,
+  # иначе отказывается устанавливаться
+  # Дефолтная учетная запись OBI:supervis
+  shell: |
+    /tmp/AstraLinux/install -d
+    /tmp/AstraLinux/install -i srv -a 127.0.0.1 -p 6669
+  when:
+    ipsServerd.status.ActiveState != "active"

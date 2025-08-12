@@ -1,0 +1,45 @@
+---
+- name: Установка зависимостей для ПК "Ребус-СОВ"
+  apt:
+    pkg:
+    - libqt4-svg
+    - libqtwebkit4
+    - libcrypto++6
+
+- name: Копирование установочных файлов ПК "Ребус-СОВ" во временный каталог
+  copy:
+    src: "{{ item }}"
+    dest: /tmp
+  loop:
+  - AstraLinux
+  - Base
+
+- name: Изменение прав доступа установочного файла ПК "Ребус-СОВ"
+  file:
+    dest=/tmp/AstraLinux/install
+    mode=a+x
+
+- name: Проверка статуса агентской службы ПК "Ребус-СОВ" (ipsAgentd)
+  systemd:
+    name: ipsAgentd
+  register:
+    ipsAgentd
+
+- name: Установка агентской части ПК "Ребус-СОВ"
+  # Выполняем только, если агентская служба неактивна
+  shell:
+    /tmp/AstraLinux/install -i agn -a {{ arm_abi_addr }} -p 6669
+  when:
+    ipsAgentd.status.ActiveState != "active"
+
+- name: Копирование drop-in файла, переопределяющего конфигурацию агентской службы ПК «Ребус-СОВ»
+  # Патч с настройками службы от тех.поддержки разработчика
+  copy:
+    src: override.conf
+    dest: /etc/systemd/system/ipsAgentd.service.d/
+
+- name: Изменение ярлыка для запуска средства настройки агентской части
+  replace:
+    path: /home/{{ admin_name.stdout }}/.fly/startmenu/rebus-sov_menu/ipsSettings.desktop
+    regexp: 'Exec = sudo /usr/local/bin/ipsSettings'
+    replace: 'Exec = fly-su /usr/local/bin/ipsSettings'
