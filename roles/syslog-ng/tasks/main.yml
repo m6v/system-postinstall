@@ -23,9 +23,8 @@
   copy:
     src: "{{ item }}"
     dest: /usr/local/lib/python2.7/dist-packages
-  loop:
-    - events_parsers.py
-    - dbus_sender.py
+  with_fileglob:
+    - "*.py"
 
 - name: Настройка пути к классам обработчиков событий syslog-ng
   lineinfile:

@@ -13,7 +13,7 @@ appname = os.path.basename(__file__).split(".")[0]
 logging.basicConfig(filename="/var/log/%s.log" % appname,
                     format="%(asctime)s %(message)s",
                     datefmt="%Y-%m-%d %H:%M:%S",
-                    level=logging.DEBUG)
+                    level=logging.INFO)
 
 
 class CustomDbusService(dbus.service.Object):
@@ -82,7 +82,7 @@ class DbusSender(object):
             # с заданной в настройках периодичностью (по умолчанию 20 мин)
             # для информирования получателя о работающем соединении
             if msg["MESSAGE"]:
-                logging.info('%s recieved message "%s"' % (type(self).__name__, msg["MESSAGE"]))
+                logging.debug('%s recieved message "%s"' % (type(self).__name__, msg["MESSAGE"]))
                 self.service.send(msg["MESSAGE"])
             return True
         except Exception as e:

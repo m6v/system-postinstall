@@ -1,3 +1,56 @@
-# Drweb installotors
+# These are some examples of commonly ignored file patterns.
+# You should customize this list as applicable to your project.
+# Learn more about .gitignore:
+#     https://www.atlassian.com/git/tutorials/saving-changes/gitignore
+
+# Node artifact files
+node_modules/
+dist/
+
+# Compiled Java class files
+*.class
+
+# Compiled Python bytecode
+*.py[cod]
+__pycache__/
+
+# Log files
+*.log
+
+# Archive files
+*.tar.gz
+
+# Package files
+*.jar
+
+# Maven
+target/
+dist/
+
+# pyinstaller
+build/
+dist/
+main.spec
+
+# Geany projects
+*.geany
+
+# Unit test reports
+TEST*.xml
+
+# Applications
+*.app
+*.exe
+*.war
+
+# Large media files
+*.mp4
+*.tiff
+*.avi
+*.flv
+*.mov
+*.wmv
+
+# Dr.Web installators
 drweb*.run
 
