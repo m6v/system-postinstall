@@ -5,6 +5,11 @@
     - python-dbus
     - fly-notifications
 
+- name: Настройка и копирование файла с источниками и точками назначения
+  template:
+    src: astra-custom.j2
+    dest: /etc/syslog-ng/conf.d/astra-custom.conf
+
 - name: Копирование файлов конфигурации syslog-ng
   copy:
     src: "{{ item }}"
@@ -13,11 +18,6 @@
     group: root
   with_fileglob:
     - "*.conf"
-
-- name: Настройка и копирование файла с источниками и точками назначения
-  template:
-    src: astra-custom.j2
-    dest: /etc/syslog-ng/conf.d/astra-custom.conf
 
 - name: Копирование файлов с классами обработчиков событий и отправки сообщений в dbus
   copy:

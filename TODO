@@ -9,3 +9,17 @@ arm_abi - отображение уведомлений
 rebus_events вынести в отдельную задачу с установкой ПК Ребус-СОВ
 
 Выполнить декомпозицию custom_syslog_ng_classes на отдельные файлы. Один файл с родительским классом EventsParser и отдельные файлы на дочерние классы
+
+Сделать обработчик событий Drweb, который пишет в syslog записи вида
+авг 12 14:02:14 arm-abi drweb-fcheck[1733]: Threats: LinuxSpider-1548: "/tmp/eicar" - infected with EICAR Test File (NOT a Virus!)
+авг 12 14:02:14 arm-abi drweb-fcheck[1733]: Cure failed: Cannot be cured: "/tmp/eicar"
+авг 12 14:02:14 arm-abi drweb-fcheck[1733]: Quarantined: "/tmp/eicar"
+
+# Назначить файл логирования вместо syslog
+drweb-ctl cfset Root.Log /var/log/drweb.log
+В нем записи об обнаружении угроз выглядят следующим образом:
+2025-Aug-12 14:31:15 [FC-1733] Notice: Threats: LinuxSpider-1548: "/tmp/eicar" - infected with EICAR Test File (NOT a Virus!)
+2025-Aug-12 14:31:15 [FC-1733] Error: Cure failed: Cannot be cured: "/tmp/eicar"
+2025-Aug-12 14:31:15 [FC-1733] Notice: Quarantined: "/tmp/eicar"
+где 1548 идентификатор процесса /opt/drweb.com/bin/drweb-spider.real
+    1733 идентификатор процесса /opt/drweb.com/bin/drweb-filecheck.real
