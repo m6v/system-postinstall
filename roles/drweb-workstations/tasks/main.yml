@@ -24,7 +24,7 @@
     dest: /lib/security/pam_drweb_session.so
     state: link
 
-- name: Создать каталог карантина
+- name: Создание каталога карантина
   file:
     path: '{{ quarantine }}'
     state: directory
@@ -63,3 +63,8 @@
   shell: |
     wget https://{{ arm_abi_addr }}:9081/install/windows/drwcsd-certificate.pem --no-check-certificate -P /tmp
     drweb-ctl esconnect {{ arm_abi_addr }} --Certificate /tmp/drwcsd-certificate.pem --Newbie
+
+# Проверить правильность работы
+- name: Изменение логирования с syslog в /var/log/drweb.log
+  shell:
+    drweb-ctl cfset Root.Log /var/log/drweb.log

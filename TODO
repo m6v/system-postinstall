@@ -1,21 +1,20 @@
+Установку dbus_sender сделать отдельной задачей и запускать ее только на arm-abi.
+Шаблон astra-parser разделить на два, один для всех компов с d_udp_syslog, остальные для arm-abi с настройкой эндпоинта для оповещения о событиях ИБ
+
 Разделить задачу syslog-ng на две:
-all - только отправка логов на АРМ-АБИ
-arm_abi - отображение уведомлений
+- all - только отправка логов на АРМ-АБИ
+- arm_abi - отображение уведомлений
+
+Посмотреть как можно доработать обработчик событий auditd по образцу https://habr.com/ru/articles/925962/
+
+Подумать о переходе формата с разделением полей ; на json
 
 Разобраться почему dbus_sender пишет лог в events_parsers.log
 
-Разделить events_parsers.py на несколько
-
-rebus_events вынести в отдельную задачу с установкой ПК Ребус-СОВ
-
-Выполнить декомпозицию custom_syslog_ng_classes на отдельные файлы. Один файл с родительским классом EventsParser и отдельные файлы на дочерние классы
-
-Сделать обработчик событий Drweb, который пишет в syslog записи вида
-авг 12 14:02:14 arm-abi drweb-fcheck[1733]: Threats: LinuxSpider-1548: "/tmp/eicar" - infected with EICAR Test File (NOT a Virus!)
-авг 12 14:02:14 arm-abi drweb-fcheck[1733]: Cure failed: Cannot be cured: "/tmp/eicar"
-авг 12 14:02:14 arm-abi drweb-fcheck[1733]: Quarantined: "/tmp/eicar"
+Продумать вопрос нужно ли обработчики событий сторонних средств защиты (ПК "Ребус-СОВ", Dr.Web) выносить в таски, в которых выполняется установка и настройка этих средств
 
 # Назначить файл логирования вместо syslog
+# тоже самое можно сделать, изменив файл drweb.ini в домашнем каталоге
 drweb-ctl cfset Root.Log /var/log/drweb.log
 В нем записи об обнаружении угроз выглядят следующим образом:
 2025-Aug-12 14:31:15 [FC-1733] Notice: Threats: LinuxSpider-1548: "/tmp/eicar" - infected with EICAR Test File (NOT a Virus!)

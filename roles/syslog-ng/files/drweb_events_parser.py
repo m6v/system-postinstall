@@ -13,7 +13,6 @@ class DrwebEventsParser(EventsParser):
             # Первые 21 символ сообщения это дата и время
             dt = parser.parse(self.message[:22], fuzzy=True)
 
-            # result = re.search(r'(.*:\s*)(.*)', self.message)
             result = re.search(r'(.*:\s*)(".*")(.*)', self.message)
 
             title = "Угроза вредоносного ПО"

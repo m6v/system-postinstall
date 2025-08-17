@@ -84,7 +84,8 @@ class DbusSender(object):
             if msg["MESSAGE"]:
                 logging.debug('%s recieved message "%s"' % (type(self).__name__, msg["MESSAGE"]))
                 self.service.send(msg["MESSAGE"])
-            return True
+                return True
+            return False
         except Exception as e:
             logging.exception(e)
             return False
