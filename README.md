@@ -37,8 +37,12 @@ mkdir defaults files handlers meta tasks templates vars
 
 ## Получение ip-адресов конфигурируемых хостов
 ip-адреса конфигурируемых хостов можно получить из инвентори
+```
 {{ hostvars['arm-abi']['ansible_host'] }}
+```
 или по результатам сбора фактов (facts)
+```
 {{ hostvars[ 'arm-abi' ].ansible_default_ipv4.address }} # адрес дефолтного интерфейса
 {{ hostvars[ 'arm-abi' ].ansible_eth0.ipv4.address }}" # адрес нулевого интерфейса
 {{ hostvars[ 'arm-abi' ].ansible_eth1.ipv4.address }}" # адрес первого интерфейса и т.д.
+```
